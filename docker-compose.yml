@@ -1,0 +1,74 @@
+version: "3.6"
+services:
+    app:
+        build:
+            context: ./docker/php
+            args:
+                - TZ=${TZ}
+                - PROXY_HOST=${PROXY_HOST}
+                - PROXY_PORT=${PROXY_PORT}
+                - PROXY_USER=${PROXY_USER}
+                - PROXY_PASSWORD=${PROXY_PASSWORD}
+        container_name: wp_app
+        networks: 
+            - wordpress-link
+            - api-link
+        depends_on:
+            - db
+        volumes:
+            - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+            - ./openssl/ca.crt:/usr/local/etc/php/ca.crt
+            - ./src:/var/www/html
+            - ./logs/php:/var/log/php
+        working_dir: /var/www/html
+        environment:
+            - WORDPRESS_DB_HOST=db:3306
+            - WORDPRESS_DB_NAME=${DB_NAME}
+            - WORDPRESS_DB_USER=${DB_USER}
+            - WORDPRESS_DB_PASSWORD=${DB_PASS}
+            - TZ=${TZ}
+            - HTTP_PROXY=http://${PROXY_USER}:${PROXY_PASSWORD_ENCODING}@${PROXY_HOST}:${PROXY_PORT}
+            - HTTPS_PROXY=http://${PROXY_USER}:${PROXY_PASSWORD_ENCODING}@${PROXY_HOST}:${PROXY_PORT}
+    web:
+        image: nginx:1.17-alpine
+        container_name: wp_web
+        networks: 
+            - wordpress-link
+        depends_on:
+            - app
+        ports:
+            - 10080:80
+            - 10443:443
+        volumes:
+            - ./src:/var/www/html
+            - ./logs/nginx:/var/log/nginx
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - ./openssl/ssl:/etc/nginx/ssl
+    db:
+        image: mysql:8.0
+        container_name: wp_db
+        networks: 
+            - wordpress-link
+        ports:
+            - 13306:3306
+        volumes:
+            - db-store:/var/lib/mysql
+            - ./logs/mysql:/var/log/mysql
+            - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+        environment:
+            - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASS}
+            - MYSQL_DATABASE=${DB_NAME}
+            - MYSQL_USER=${DB_USER}
+            - MYSQL_PASSWORD=${DB_PASS}
+            - TZ=${TZ}
+networks: 
+    default:
+        external: 
+            name: bridge
+    wordpress-link:
+        name: wp_network
+    api-link:
+        external:
+            name: api_network
+volumes:
+    db-store:

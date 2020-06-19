@@ -1,0 +1,89 @@
+$brand-blue: #83acbc;
+$brand-red: #fa8d69;
+$brand-yellow: #fcd000;
+$content: #636767;
+$sub-content: #9b9e9e;
+$search: #e4e6e6;
+$footer: #dee2e2;
+$footer-content: #949898;
+$footer-sub-content: #6d7373;
+
+$theme-colors: (
+    brand-blue: $brand-blue,
+    brand-red: $brand-red,
+    brand-yellow: $brand-yellow,
+    content: $content,
+    sub-content: $sub-content,
+    search: $search,
+    footer: $footer,
+    footer-content: $footer-content,
+    footer-sub-content: $footer-sub-content,
+);
+
+$container-max-widths: (
+    sm: 480px,
+    md: 720px,
+    lg: 800px,
+    xl: 1024px,
+);
+
+@import "./scss/bootstrap.scss";
+
+$component-sizes: (
+    sm: 320px,
+    md: 480px,
+    lg: 720px,
+    xl: 1024px,
+);
+
+@mixin component($class) {
+    @each $suffix, $value in $component-sizes {
+        @media screen and (min-width: $value) {
+            #{$class}-#{$suffix} {
+                max-width: $value;
+            }
+        }
+    }
+}
+
+@include component(".component");
+
+a {
+    color: inherit;
+}
+
+.input-group.search {
+    & .input-group-text {
+        border-top-left-radius: 50rem !important;
+        border-bottom-left-radius: 50rem !important;
+    }
+    & .form-control {
+        border-top-right-radius: 50rem !important;
+        border-bottom-right-radius: 50rem !important;
+    }
+}
+
+footer {
+    @media screen and (min-width: map-get($component-sizes, md)) {
+        text-align: center;
+    }
+    & .list-group {
+        @media screen and (min-width: map-get($component-sizes, md)) {
+            justify-content: center;
+        }
+    }
+}
+
+.carousel-indicators.circle {
+    & li {
+        border-radius: 50%;
+        margin: 1px 3px;
+        height: 10px;
+        max-width: 10px;
+    }
+}
+
+:focus {
+    outline: 0 !important;
+    box-shadow: none !important;
+}
