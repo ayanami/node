@@ -72,7 +72,20 @@ const notices = [
 ];
 
 router.get('/', function (req, res) {
-    res.json(notices.filter(notice => notice.memberId == req.query.memberId));
+    const memberId = req.query?.memberId;
+    const newsInfoList = notices.filter(notice => notice.memberId == memberId)[0]?.newsInfoList;
+
+    const displayNum = req.query?.displayNum;
+    const pageNo = req.query?.pageNo ?? 1;
+    const begin = displayNum * (pageNo - 1);
+    const end = begin + displayNum;
+
+
+    res.json({
+        "memberId": memberId,
+        "result": 0,
+        "newsInfoList": newsInfoList.slice(begin, end)
+    });
 });
 
 module.exports = router;

@@ -3,6 +3,7 @@
 <meta charset="<?php bloginfo('charset'); ?>">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta content="width=device-width,initial-scale=1.0,user-scalable=yes" name="viewport">
+<title><?php wp_title(' | ', true, 'right'); ?><?php bloginfo('name'); ?></title>
 <link rel="stylesheet" href="<?php echo get_stylesheet_uri(); ?>" type="text/css" media="screen">
 <link rel="stylesheet" href="<?php echo get_stylesheet_directory_uri(); ?>/assets/css/common.css" type="text/css" media="screen">
 <?php wp_head(); ?>
